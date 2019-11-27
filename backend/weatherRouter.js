@@ -10,12 +10,9 @@ weatherRouter.route('/').get(async (req, res) => {
     const result = await getWeatherByCityName(name);
 
     if (result.error) {
-        res.json({
-            city: result.city,
-            error: result.error
-        });
+        res.json(result);
     } else {
-        res.status(404).json({ city: '', error: result.error});
+        res.status(404).json(result);
     }
 });
 

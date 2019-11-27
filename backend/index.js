@@ -1,6 +1,7 @@
 const express = require('express');
 const debug = require('debug')('index');
 const morgan = require('morgan');
+const cors = require('cors');
 
 //const { favoritesRouter } = require('./favoritesRouter');
 const { weatherRouter } = require('./weatherRouter');
@@ -8,6 +9,7 @@ const { weatherRouter } = require('./weatherRouter');
 const port = process.env.PORT || 3001;
 const app = express();
 
+app.use(cors())
 app.use(morgan('combined'));
 app.use(express.json());
 //app.use('/api/favorites', favoritesRouter);
