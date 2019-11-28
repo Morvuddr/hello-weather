@@ -7,4 +7,4 @@ export const rootReducer = combineReducers(
     city: cityReducer,
     favorites: favoritesReducer,
   }
-)
+);

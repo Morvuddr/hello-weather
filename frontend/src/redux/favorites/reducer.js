@@ -10,6 +10,15 @@ export function favoritesReducer(state = initialState, action) {
     switch (action.type) {
         case ADD_NEW_CITY: {
             const cities = [...state.cities, action.payload.city];
+            cities.sort(function (a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                }
+                if (a.name < b.name) {
+                    return -1;
+                }
+                return 0;
+            });
             return {
                 ...state,
                 cities,
@@ -19,7 +28,7 @@ export function favoritesReducer(state = initialState, action) {
         case UPDATE_CITY: {
             const { city } = action.payload;
             const cities = [...state.cities];
-            cities[cities.findIndex(c => c.id === city.id)] = city;
+            cities[cities.findIndex(c => c.name === city.name)] = city;
             return {
                 ...state,
                 cities,
@@ -27,14 +36,14 @@ export function favoritesReducer(state = initialState, action) {
         }
 
         case ADD_NEW_CITY_LOADING: {
-            const { id, isLoading } = action.payload;
+            const { name, isLoading } = action.payload;
             const newIsLoading = [...state.isLoading];
-            const isCityLoadingNow = newIsLoading.includes(id);
+            const isCityLoadingNow = newIsLoading.includes(name);
 
             if (isCityLoadingNow && !isLoading) {
-                newIsLoading.splice(newIsLoading.indexOf(id), 1);
+                newIsLoading.splice(newIsLoading.indexOf(name), 1);
             } else if (isLoading && !isCityLoadingNow) {
-                newIsLoading.push(id);
+                newIsLoading.push(name);
             }
             return {
                 ...state,
@@ -44,7 +53,7 @@ export function favoritesReducer(state = initialState, action) {
 
         case REMOVE_CITY: {
             const cities = [...state.cities];
-            cities.splice(cities.findIndex(c => c.id === action.payload.id), 1);
+            cities.splice(cities.findIndex(c => c.name === action.payload.name), 1);
             return {
                 ...state,
                 cities,
@@ -52,10 +61,10 @@ export function favoritesReducer(state = initialState, action) {
         }
 
         case LOADING_ERROR: {
-            const id = action.payload.id;
+            const name = action.payload.name;
             const errors = [...state.errors];
-            if (!errors.includes(id)) {
-                errors.push(id);
+            if (!errors.includes(name)) {
+                errors.push(name);
             }
             return {
                 ...state,

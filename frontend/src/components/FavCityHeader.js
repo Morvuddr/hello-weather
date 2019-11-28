@@ -7,7 +7,7 @@ const FavCityHeader = ({ onRemove, city }) => (
         <h1>{city.name}</h1>
         {!!city.img && <img src={city.img} alt='Иконка погоды' />}
         {!!city.temperature && <h1>{city.temperature}</h1>}
-        <button className='deleteButton' onClick={() => onRemove(city.id)}>&#xd7;</button>
+        <button className='deleteButton' onClick={() => onRemove(city.name)}>&#xd7;</button>
     </div>
 );
 

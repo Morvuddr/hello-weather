@@ -10,9 +10,9 @@ const FavoritesList = ({ cities, isLoading , errors, onRemove}) => (
     <div className='FavList'>
         {
             cities.map((city) => (
-                <div key={city.id} className={'FavoriteCity'}>
+                <div key={city.name} className={'FavoriteCity'}>
                     <FavCityHeader onRemove={onRemove} city={city}/>
-                    { (!errors.includes(city.id)) ? ((!isLoading.includes(city.id) ? <WeatherInfo weather={city}/> : <Loader/>)) : <Error/>}
+                    { (!errors.includes(city.name)) ? ((!isLoading.includes(city.name) ? <WeatherInfo weather={city}/> : <Loader/>)) : <Error/>}
                 </div>
             ))
         }

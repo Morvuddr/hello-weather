@@ -1,54 +1,66 @@
 import * as types from './actionTypes';
-import { CITIES } from '../../helpers/const';
-import WeatherLocalStorage from '../../helpers/WeatherLocalStorage';
-import LocationService from '../../helpers/LocationService';
-import generateId from '../../helpers/generateId';
+import API from '../../helpers/API';
 
 export function initCities() {
     return async (dispatch) => {
-        const cities = new WeatherLocalStorage(CITIES).getItem() || [];
+        const cities = await API.getCities();
         cities.map(async localCity => {
-            dispatch(addNewCityLoading(localCity.id, true));
+            dispatch(addNewCityLoading(localCity.name, true));
             dispatch(addNewCity(localCity));
-            const { city, error } = await LocationService.getWeatherByCityName(localCity.name);
-            city.id = localCity.id;
+            const { city, error } = await API.getWeatherByCityName(localCity.name);
 
             if (error.status) {
-                dispatch(loadingError(localCity.id));
+                dispatch(loadingError(localCity.name));
             } else {
                 dispatch(updateCity(city));
             }
 
-            dispatch(addNewCityLoading(localCity.id, false));
+            dispatch(addNewCityLoading(localCity.name, false));
         });
     };
 }
 
-export function addNewCityAsync(newCity) {
+export function addNewCityAsync(newCity, cities) {
     return async (dispatch) => {
-        if (!newCity.id) {
-            newCity.id = generateId();
+        if (!isNaN(newCity.name)) {
+            alert("Некорректные данные");
+            return;
         }
+        if (cities.findIndex(city => city.name === newCity.name) === -1) {
+            dispatch(addNewCityLoading(newCity.name, true));
+            dispatch(addNewCity(newCity));
+            const { city, error } = await API.addNewCity(newCity.name);
 
-        dispatch(addNewCityLoading(newCity.id, true));
-        dispatch(addNewCity(newCity));
-        const { city, error } = await LocationService.getWeatherByCityName(newCity.name);
-        city.id = newCity.id;
+            if (error.status) {
+                if (error.code === 404) {
+                    alert('Невозможно найти погоду для города: ' + newCity.name);
+                    dispatch(removeCity(newCity.name));
 
-        if (error.status) {
-            if (error.code !== 404) {
-                dispatch(loadingError(newCity.id));
+                } else {
+                        alert('Не удалось добавить город ' + newCity.name);
+                        dispatch(removeCity(newCity.name));
+                }
             } else {
-                alert('Невозможно найти погоду для города: ' + newCity.name);
-                dispatch(removeCity(newCity.id));
+                dispatch(updateCity(city));
+                dispatch(addNewCityLoading(newCity.name, false));
             }
         } else {
-            dispatch(updateCity(city));
-            new WeatherLocalStorage(CITIES).addArrayItem(newCity);
-            dispatch(addNewCityLoading(newCity.id, false));
+            alert("Город уже добавлен в избранное")
         }
     };
 }
+
+export function removeCityAsync(name) {
+    return async (dispatch) => {
+        const { error } = await API.deleteCity(name);
+        if (!error.status) {
+            dispatch(removeCity(name));
+        } else {
+            alert("Не удалось удалить город " + name);
+        }
+    }
+}
+
 
 export function addNewCity(city) {
     return ({ type: types.ADD_NEW_CITY, payload: { city } });
@@ -58,24 +70,23 @@ export function updateCity(city) {
     return ({ type: types.UPDATE_CITY, payload: { city } });
 }
 
-export function removeCity(id) {
-    new WeatherLocalStorage(CITIES).removeArrayItem(id);
-    return ({ type: types.REMOVE_CITY, payload: { id } });
+export function removeCity(name) {
+    return ({ type: types.REMOVE_CITY, payload: { name } });
 }
 
-export function addNewCityLoading(id, isLoading) {
+export function addNewCityLoading(name, isLoading) {
     return {
         type: types.ADD_NEW_CITY_LOADING,
         payload: {
-            id,
+            name,
             isLoading
         }
     };
 }
 
-export function loadingError(id) {
+export function loadingError(name) {
     return {
         type: types.LOADING_ERROR,
-        payload: { id }
+        payload: { name }
     }
 }

@@ -3,18 +3,19 @@ import * as PropTypes from 'prop-types';
 import Search from '../components/Search';
 import FavoritesList from '../components/FavoritesList';
 import { connect } from 'react-redux';
-import { addNewCityAsync, removeCity } from '../redux/favorites/actions';
+import { addNewCityAsync, removeCityAsync } from '../redux/favorites/actions';
 
 class FavoritesContainer extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.addCity({ name: e.target.cityName.value });
+        const name = e.target.cityName.value[0].toUpperCase() + e.target.cityName.value.slice(1).toLowerCase();
+        this.props.addCity({ name }, this.props.cities);
         e.target[0].value = '';
     };
 
-    handleRemove = (id) => {
-        this.props.removeCity(id);
+    handleRemove = (name) => {
+        this.props.removeCity(name);
     };
 
     render() {
@@ -51,7 +52,7 @@ const mapStateToProps = ({ favorites: { cities, isLoading, errors } }) => ({
 
 const mapDispatchToProps = {
     addCity: addNewCityAsync,
-    removeCity: removeCity,
+    removeCity: removeCityAsync,
 };
 
 
