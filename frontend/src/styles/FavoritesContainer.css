@@ -10,7 +10,7 @@
 .search h1 {
     text-align: left;
 }
-.searchInput {
+.mySearchInput {
     height: 35px;
     width: 160px;
     margin-right: 10px;
@@ -21,6 +21,7 @@
     color: darkgray;
     opacity: 1;
     text-align: center;
+    font-size: 13px;
 }
 .searchButton {
     height: 32px;

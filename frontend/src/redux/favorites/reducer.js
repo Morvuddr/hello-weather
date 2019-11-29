@@ -1,9 +1,13 @@
-import { ADD_NEW_CITY, ADD_NEW_CITY_LOADING, REMOVE_CITY, UPDATE_CITY, LOADING_ERROR } from './actionTypes';
+import { ADD_NEW_CITY, ADD_NEW_CITY_LOADING, REMOVE_CITY, UPDATE_CITY, LOADING_ERROR, SHOW_HIDE_MODAL } from './actionTypes';
 
 const initialState = {
     cities: [],
     isLoading: [],
     errors: [],
+    showModal: {
+        status: false,
+        text: 'Ошибка'
+    }
 };
 
 export function favoritesReducer(state = initialState, action) {
@@ -70,6 +74,18 @@ export function favoritesReducer(state = initialState, action) {
                 ...state,
                 errors,
             };
+        }
+
+        case SHOW_HIDE_MODAL: {
+            const currentState = state.showModal;
+            const text = action.payload.text;
+            return {
+                ...state,
+                showModal: {
+                    status: !currentState.status,
+                    text
+                }
+            }
         }
 
         default: {

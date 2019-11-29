@@ -23,21 +23,20 @@ export function initCities() {
 export function addNewCityAsync(newCity, cities) {
     return async (dispatch) => {
         if (!isNaN(newCity.name)) {
-            alert("Некорректные данные");
+            dispatch(handleModal('Некорректные данные'));
             return;
         }
         if (cities.findIndex(city => city.name === newCity.name) === -1) {
             dispatch(addNewCityLoading(newCity.name, true));
             dispatch(addNewCity(newCity));
             const { city, error } = await API.addNewCity(newCity.name);
-
             if (error.status) {
                 if (error.code === 404) {
-                    alert('Невозможно найти погоду для города: ' + newCity.name);
+                    dispatch(handleModal('Невозможно найти погоду для города: ' + newCity.name + '. Попробуйте другой город.'));
                     dispatch(removeCity(newCity.name));
 
                 } else {
-                        alert('Не удалось добавить город ' + newCity.name);
+                        dispatch(handleModal('Не удалось добавить город ' + newCity.name + '. Попробуйте позже.'));
                         dispatch(removeCity(newCity.name));
                 }
             } else {
@@ -45,7 +44,7 @@ export function addNewCityAsync(newCity, cities) {
                 dispatch(addNewCityLoading(newCity.name, false));
             }
         } else {
-            alert("Город уже добавлен в избранное")
+            dispatch(handleModal('Город уже добавлен в избранное. Добавьте другой.'));
         }
     };
 }
@@ -56,7 +55,7 @@ export function removeCityAsync(name) {
         if (!error.status) {
             dispatch(removeCity(name));
         } else {
-            alert("Не удалось удалить город " + name);
+            dispatch(handleModal('Не удалось удалить город ' + name + '. Попробуйте позже.'));
         }
     }
 }
@@ -88,5 +87,14 @@ export function loadingError(name) {
     return {
         type: types.LOADING_ERROR,
         payload: { name }
+    }
+}
+
+export function handleModal(text) {
+    return {
+        type: types.SHOW_HIDE_MODAL,
+        payload: {
+            text
+        }
     }
 }

@@ -8,7 +8,7 @@ const Search = ({ onSubmit = f => f }) => (
             Избранное
         </h1>
         <form onSubmit={onSubmit}>
-            <input className='searchInput' placeholder='Добавить новый город' name='cityName' required='required'/>
+            <input className='mySearchInput' placeholder='Добавить новый город' name='cityName' required='required'/>
             <button className='searchButton' type='submit'>&#43;</button>
         </form>
     </div>

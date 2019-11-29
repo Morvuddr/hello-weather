@@ -45,14 +45,14 @@ export default class API {
                     status: false
                 }
             });
-        } catch (_) {
-            return ({
+        } catch (e) {
+            return({
                 city: null,
                 error: {
                     status: true,
                     code: null
                 }
-            });
+            })
         }
     };
 
